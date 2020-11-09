@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE nta PUBLIC '-//Uppaal Team//DTD Flat System 1.1//EN' 'http://www.it.uu.se/research/group/darts/uppaal/flat-1_2.dtd'>
+<nta>
+	<declaration>// Place global declarations here.
+clock x;
+
+// channel for natural heartbeat 
+//urgent broadcast chan natural;
+chan natural;
+// channe for pacemaker generated pulse 
+urgent chan trig; </declaration>
+	<template>
+		<name x="5" y="5">RandomHeart</name>
+		<declaration>// Place local declarations here.
+
+// internal clock 
+clock t; 
+
+// internal random beat
+double msperbeat; 
+
+// generate random number for beats 
+void randomBeat() 
+{
+    msperbeat = random(1800-400)+400;
+}</declaration>
+		<location id="id0" x="24" y="88">
+			<name x="8" y="96">Beat</name>
+		</location>
+		<location id="id1" x="24" y="-72">
+			<name x="8" y="-104">Wait</name>
+		</location>
+		<init ref="id1"/>
+		<transition>
+			<source ref="id1"/>
+			<target ref="id0"/>
+			<label kind="synchronisation" x="-8" y="0">trig?</label>
+		</transition>
+		<transition>
+			<source ref="id0"/>
+			<target ref="id1"/>
+			<label kind="assignment" x="120" y="0">randomBeat()</label>
+			<nail x="112" y="88"/>
+			<nail x="112" y="-72"/>
+		</transition>
+		<transition>
+			<source ref="id1"/>
+			<target ref="id0"/>
+			<label kind="guard" x="-160" y="0">t &gt; msperbeat</label>
+			<label kind="synchronisation" x="-136" y="16">natural!</label>
+			<nail x="8" y="-72"/>
+			<nail x="-64" y="-72"/>
+			<nail x="-64" y="88"/>
+		</transition>
+	</template>
+	<template>
+		<name x="5" y="5">Pacemaker</name>
+		<declaration>// Place local declarations here.
+
+int bpm = 0; 
+
+// refactor clock for pacemaker
+clock ref; </declaration>
+		<location id="id2" x="32" y="-304">
+			<name x="22" y="-334">Pulse</name>
+		</location>
+		<location id="id3" x="32" y="-24">
+			<name x="-16" y="-48">Inhibit</name>
+		</location>
+		<init ref="id2"/>
+		<transition>
+			<source ref="id3"/>
+			<target ref="id2"/>
+			<label kind="guard" x="-136" y="-192">ref &gt; 500</label>
+			<label kind="synchronisation" x="-136" y="-208">trig!</label>
+			<label kind="assignment" x="-136" y="-176">bpm++</label>
+			<nail x="-88" y="-24"/>
+			<nail x="-88" y="-304"/>
+		</transition>
+		<transition>
+			<source ref="id3"/>
+			<target ref="id2"/>
+			<label kind="synchronisation" x="168" y="-176">natural?</label>
+			<nail x="160" y="-24"/>
+			<nail x="160" y="-304"/>
+		</transition>
+		<transition>
+			<source ref="id3"/>
+			<target ref="id3"/>
+			<label kind="guard" x="-16" y="24">150 &lt;= ref &lt;= 500</label>
+			<nail x="8" y="16"/>
+			<nail x="64" y="16"/>
+		</transition>
+		<transition>
+			<source ref="id2"/>
+			<target ref="id3"/>
+			<label kind="assignment" x="40" y="-176">ref:=0</label>
+		</transition>
+	</template>
+	<system>// List one or more processes to be composed into a system.
+system RandomHeart, Pacemaker;</system>
+	<queries>
+		<query>
+			<formula></formula>
+			<comment></comment>
+		</query>
+	</queries>
+</nta>
