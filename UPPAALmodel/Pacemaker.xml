@@ -1,15 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?><!DOCTYPE nta PUBLIC '-//Uppaal Team//DTD Flat System 1.1//EN' 'http://www.it.uu.se/research/group/darts/uppaal/flat-1_1.dtd'><nta><declaration>// Place global declarations here.
 clock b; 
 
-chan pace, sense; 
+broadcast chan pace, sense; 
+chan oPace,OSense;
 
 int lrh = 600; 
 int lrl = 1500; </declaration><template><name x="5" y="5">RandomHeart</name><declaration>// Place local declarations here.
 
 // internal clock 
 clock t;
-int maxBeat = 5000; 
-</declaration><location id="id0" x="24" y="-72"><name x="-24" y="-80">Wait</name></location><init ref="id0"/><transition><source ref="id0"/><target ref="id0"/><label kind="synchronisation" x="0" y="24">pace?</label><nail x="72" y="16"/><nail x="-24" y="16"/></transition><transition><source ref="id0"/><target ref="id0"/><label kind="guard" x="-24" y="-192">t &gt;= maxBeat</label><label kind="synchronisation" x="0" y="-176">sense!</label><nail x="-24" y="-152"/><nail x="80" y="-152"/></transition></template><template><name x="5" y="5">Pacemaker</name><declaration>// Place local declarations here.
+int maxBeat = 1500;
+int minBeat = 600;  
+</declaration><location id="id0" x="24" y="-72"><name x="-24" y="-80">Wait</name></location><init ref="id0"/><transition><source ref="id0"/><target ref="id0"/><label kind="synchronisation" x="0" y="24">pace?</label><label kind="assignment" x="8" y="40">t:=0</label><nail x="72" y="16"/><nail x="-24" y="16"/></transition><transition><source ref="id0"/><target ref="id0"/><label kind="guard" x="-24" y="-208">t &gt;= minBeat</label><label kind="synchronisation" x="-8" y="-192">sense!</label><label kind="assignment" x="0" y="-176">t:=0</label><nail x="-24" y="-152"/><nail x="80" y="-152"/></transition></template><template><name x="5" y="5">Pacemaker</name><declaration>// Place local declarations here.
 
 int bpm = 0; 
 
@@ -24,4 +26,4 @@ bool vstarted;
 int tv; </declaration><location id="id3" x="184" y="-120"><name x="174" y="-150">Paced</name><committed/></location><location id="id4" x="24" y="-120"><name x="14" y="-150">Wait</name></location><location id="id5" x="-136" y="-120"><name x="-168" y="-152">Sensed</name><committed/></location><init ref="id4"/><transition><source ref="id4"/><target ref="id5"/><label kind="synchronisation" x="-80" y="-168">sense?</label><nail x="-56" y="-152"/></transition><transition><source ref="id3"/><target ref="id4"/><label kind="assignment" x="56" y="-88">vstarted = true,
 tv = 0</label><nail x="96" y="-96"/></transition><transition><source ref="id4"/><target ref="id3"/><label kind="synchronisation" x="96" y="-176">pace?</label><nail x="104" y="-152"/></transition><transition><source ref="id5"/><target ref="id4"/><label kind="assignment" x="-104" y="-88">vstarted = true,
 tv = 0</label><nail x="-64" y="-88"/></transition></template><system>// List one or more processes to be composed into a system.
-system RandomHeart, Pacemaker,Observer;</system></nta>
+system RandomHeart, Pacemaker, Observer;</system></nta>
