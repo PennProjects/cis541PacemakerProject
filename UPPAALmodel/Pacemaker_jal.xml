@@ -63,7 +63,7 @@ int rateInterval; </declaration>
 			<target ref="id2"/>
 			<label kind="synchronisation" x="323" y="-213">sense?</label>
 			<label kind="assignment" x="331" y="-187">t=0, 
-rateInterval = lowRateInterval</label>
+rateInterval = highRateInterval</label>
 			<nail x="314" y="-306"/>
 			<nail x="314" y="-59"/>
 		</transition>
@@ -73,7 +73,7 @@ rateInterval = lowRateInterval</label>
 			<label kind="guard" x="-51" y="-212">t &gt;= rateInterval</label>
 			<label kind="synchronisation" x="-24" y="-192">pace!</label>
 			<label kind="assignment" x="-85" y="-187">t=0,
-rateInterval=highRateInterval</label>
+rateInterval=lowRateInterval</label>
 		</transition>
 		<transition>
 			<source ref="id2"/>
@@ -152,7 +152,9 @@ system RandomHeart, Pacemaker, Observer;</system>
 			<comment></comment>
 		</query>
 		<query>
-			<formula>Observer.Sensed --&gt; Observer.Wait</formula>
+			<formula>Observer.Sensed --&gt; Observer.Wait
+
+	</formula>
 			<comment></comment>
 		</query>
 	</queries>
