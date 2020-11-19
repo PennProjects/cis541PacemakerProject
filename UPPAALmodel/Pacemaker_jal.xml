@@ -43,7 +43,8 @@ int minBeat = 600;
 		<name x="5" y="5">Pacemaker</name>
 		<declaration>// Place local declarations here.
 
-//int bpm = 0; 
+int vrp_min = 150;
+int vrp_max = 500;
 
 // refactor clock for pacemaker
 clock t; 
@@ -55,7 +56,7 @@ int rateInterval; </declaration>
 		</location>
 		<location id="id2" x="32" y="-64">
 			<name x="16" y="-48">Wait</name>
-			<label kind="invariant" x="0" y="-32">t &lt; 500</label>
+			<label kind="invariant" x="0" y="-32">t &lt; vrp_max</label>
 		</location>
 		<init ref="id1"/>
 		<transition>
@@ -78,7 +79,7 @@ rateInterval=lowRateInterval</label>
 		<transition>
 			<source ref="id2"/>
 			<target ref="id1"/>
-			<label kind="guard" x="-327" y="-204">t &gt;= 150</label>
+			<label kind="guard" x="-327" y="-204">t &gt;= vrp_min</label>
 			<nail x="-263" y="-68"/>
 			<nail x="-263" y="-308"/>
 		</transition>
