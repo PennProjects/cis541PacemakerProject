@@ -7,7 +7,10 @@ clock b;
 broadcast chan pace, sense; 
 
 int highRateInterval = 600; 
-int lowRateInterval = 1500; </declaration>
+int lowRateInterval = 1500; 
+
+int vrp_min = 150;
+int vrp_max = 500;</declaration>
 	<template>
 		<name x="5" y="5">RandomHeart</name>
 		<declaration>// Place local declarations here.
@@ -17,26 +20,38 @@ clock t;
 int maxBeat = 1500;
 int minBeat = 600;  
 </declaration>
-		<location id="id0" x="24" y="-72">
-			<name x="-24" y="-80">Wait</name>
+		<location id="id0" x="-297" y="-127">
+			<name x="-348" y="-153">Ready</name>
+			<label kind="invariant" x="-391" y="-127">t &lt;= maxBeat</label>
+		</location>
+		<location id="id1" x="-34" y="-127">
+			<name x="-25" y="-161">Idle</name>
+			<label kind="invariant" x="-17" y="-119">t &lt; vrp_max</label>
 		</location>
 		<init ref="id0"/>
 		<transition>
-			<source ref="id0"/>
+			<source ref="id1"/>
 			<target ref="id0"/>
-			<label kind="synchronisation" x="0" y="24">pace?</label>
-			<label kind="assignment" x="8" y="40">t:=0</label>
-			<nail x="72" y="16"/>
-			<nail x="-24" y="16"/>
+			<label kind="guard" x="-221" y="-59">t &gt;= vrp_min</label>
+			<nail x="-34" y="-59"/>
+			<nail x="-297" y="-59"/>
 		</transition>
 		<transition>
 			<source ref="id0"/>
-			<target ref="id0"/>
-			<label kind="guard" x="-24" y="-208">t &gt;= minBeat</label>
-			<label kind="synchronisation" x="-8" y="-192">sense!</label>
-			<label kind="assignment" x="0" y="-176">t:=0</label>
-			<nail x="-24" y="-152"/>
-			<nail x="80" y="-152"/>
+			<target ref="id1"/>
+			<label kind="synchronisation" x="-195" y="-153">pace!</label>
+			<label kind="assignment" x="-187" y="-127">t:=0</label>
+			<nail x="-110" y="-127"/>
+		</transition>
+		<transition>
+			<source ref="id0"/>
+			<target ref="id1"/>
+			<label kind="guard" x="-212" y="-255">t &gt;= minBeat</label>
+			<label kind="synchronisation" x="-187" y="-238">sense!</label>
+			<label kind="assignment" x="-178" y="-221">t:=0</label>
+			<nail x="-297" y="-195"/>
+			<nail x="-34" y="-195"/>
+			<nail x="-34" y="-153"/>
 		</transition>
 	</template>
 	<template>
@@ -50,18 +65,18 @@ int vrp_max = 500;
 clock t; 
 
 int rateInterval; </declaration>
-		<location id="id1" x="32" y="-304">
-			<name x="17" y="-340">Idle</name>
-			<label kind="invariant" x="-25" y="-357">t &lt;= rateInterval</label>
+		<location id="id2" x="204" y="-306">
+			<name x="189" y="-342">Idle</name>
+			<label kind="invariant" x="147" y="-359">t &lt;= rateInterval</label>
 		</location>
-		<location id="id2" x="32" y="-64">
-			<name x="16" y="-48">Wait</name>
-			<label kind="invariant" x="0" y="-32">t &lt; vrp_max</label>
+		<location id="id3" x="204" y="-59">
+			<name x="188" y="-43">Wait</name>
+			<label kind="invariant" x="172" y="-27">t &lt; vrp_max</label>
 		</location>
-		<init ref="id1"/>
+		<init ref="id2"/>
 		<transition>
-			<source ref="id1"/>
-			<target ref="id2"/>
+			<source ref="id2"/>
+			<target ref="id3"/>
 			<label kind="synchronisation" x="323" y="-213">sense?</label>
 			<label kind="assignment" x="331" y="-187">t=0, 
 rateInterval = highRateInterval</label>
@@ -69,16 +84,16 @@ rateInterval = highRateInterval</label>
 			<nail x="314" y="-59"/>
 		</transition>
 		<transition>
-			<source ref="id1"/>
-			<target ref="id2"/>
+			<source ref="id2"/>
+			<target ref="id3"/>
 			<label kind="guard" x="-51" y="-212">t &gt;= rateInterval</label>
 			<label kind="synchronisation" x="-24" y="-192">pace!</label>
 			<label kind="assignment" x="-85" y="-187">t=0,
 rateInterval=lowRateInterval</label>
 		</transition>
 		<transition>
-			<source ref="id2"/>
-			<target ref="id1"/>
+			<source ref="id3"/>
+			<target ref="id2"/>
 			<label kind="guard" x="-327" y="-204">t &gt;= vrp_min</label>
 			<nail x="-263" y="-68"/>
 			<nail x="-263" y="-308"/>
@@ -87,46 +102,46 @@ rateInterval=lowRateInterval</label>
 	<template>
 		<name x="5" y="5">Observer</name>
 		<declaration>// Place local declarations here.
-bool vstarted; 
+bool ventricleStarted; 
 
-int tv; </declaration>
-		<location id="id3" x="184" y="-120">
-			<name x="174" y="-150">Paced</name>
+int ventricleIntervalTime; </declaration>
+		<location id="id4" x="263" y="-119">
+			<name x="253" y="-149">Paced</name>
 			<committed/>
 		</location>
-		<location id="id4" x="24" y="-120">
-			<name x="14" y="-150">Wait</name>
+		<location id="id5" x="34" y="-119">
+			<name x="24" y="-149">Wait</name>
 		</location>
-		<location id="id5" x="-136" y="-120">
-			<name x="-168" y="-152">Sensed</name>
+		<location id="id6" x="-221" y="-119">
+			<name x="-253" y="-151">Sensed</name>
 			<committed/>
 		</location>
-		<init ref="id4"/>
+		<init ref="id5"/>
+		<transition>
+			<source ref="id5"/>
+			<target ref="id6"/>
+			<label kind="synchronisation" x="-110" y="-170">sense?</label>
+			<nail x="-93" y="-153"/>
+		</transition>
 		<transition>
 			<source ref="id4"/>
 			<target ref="id5"/>
-			<label kind="synchronisation" x="-80" y="-168">sense?</label>
-			<nail x="-56" y="-152"/>
-		</transition>
-		<transition>
-			<source ref="id3"/>
-			<target ref="id4"/>
-			<label kind="assignment" x="56" y="-88">vstarted = true,
-tv = 0</label>
-			<nail x="96" y="-96"/>
-		</transition>
-		<transition>
-			<source ref="id4"/>
-			<target ref="id3"/>
-			<label kind="synchronisation" x="96" y="-176">pace?</label>
-			<nail x="104" y="-152"/>
+			<label kind="assignment" x="93" y="-76">ventricleStarted = true,
+ventricleIntervalTime = 0</label>
+			<nail x="153" y="-85"/>
 		</transition>
 		<transition>
 			<source ref="id5"/>
 			<target ref="id4"/>
-			<label kind="assignment" x="-104" y="-88">vstarted = true,
-tv = 0</label>
-			<nail x="-64" y="-88"/>
+			<label kind="synchronisation" x="136" y="-178">pace?</label>
+			<nail x="153" y="-153"/>
+		</transition>
+		<transition>
+			<source ref="id6"/>
+			<target ref="id5"/>
+			<label kind="assignment" x="-161" y="-85">ventricleStarted= true,
+ventricleIntervalTime = 0</label>
+			<nail x="-93" y="-85"/>
 		</transition>
 	</template>
 	<system>// List one or more processes to be composed into a system.
