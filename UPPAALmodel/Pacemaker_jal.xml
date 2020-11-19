@@ -33,6 +33,7 @@ int minBeat = 600;
 			<source ref="id1"/>
 			<target ref="id0"/>
 			<label kind="guard" x="-221" y="-59">t &gt;= vrp_min</label>
+			<label kind="assignment" x="-187" y="-42">t := 0</label>
 			<nail x="-34" y="-59"/>
 			<nail x="-297" y="-59"/>
 		</transition>
