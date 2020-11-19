@@ -155,6 +155,10 @@ system RandomHeart, Pacemaker, Observer;</system>
 			<comment></comment>
 		</query>
 		<query>
+			<formula>A&lt;&gt; RandomHeart.Ready imply RandomHeart.Idle</formula>
+			<comment></comment>
+		</query>
+		<query>
 			<formula>A&lt;&gt; Pacemaker.Ready imply Pacemaker.Idle</formula>
 			<comment></comment>
 		</query>
@@ -163,23 +167,7 @@ system RandomHeart, Pacemaker, Observer;</system>
 			<comment></comment>
 		</query>
 		<query>
-			<formula>A[] Pacemaker.heartPaceEnable imply (Observer.ventricleIntervalTime &lt;= lowRateInterval)</formula>
-			<comment></comment>
-		</query>
-		<query>
 			<formula>A[] Observer.Paced imply (Observer.ventricleIntervalTime &gt;= highRateInterval)</formula>
-			<comment></comment>
-		</query>
-		<query>
-			<formula>A[] (Observer.ventricleIntervalTime &lt;= lowRateInterval)</formula>
-			<comment></comment>
-		</query>
-		<query>
-			<formula>A&lt;&gt; RandomHeart.Ready imply RandomHeart.Idle</formula>
-			<comment></comment>
-		</query>
-		<query>
-			<formula>RandomHeart.Ready --&gt; RandomHeart.Idle</formula>
 			<comment></comment>
 		</query>
 		<query>
