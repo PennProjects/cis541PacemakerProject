@@ -22,7 +22,7 @@ int minBeat = 600;
 </declaration>
 		<location id="id0" x="-297" y="-127">
 			<name x="-348" y="-153">Ready</name>
-			<label kind="invariant" x="-391" y="-127">t &lt;= maxBeat</label>
+			<label kind="invariant" x="-425" y="-136">t &lt;= lowRateInterval</label>
 		</location>
 		<location id="id1" x="-34" y="-127">
 			<name x="-25" y="-161">Idle</name>
@@ -40,14 +40,14 @@ int minBeat = 600;
 		<transition>
 			<source ref="id0"/>
 			<target ref="id1"/>
-			<label kind="synchronisation" x="-195" y="-153">pace!</label>
+			<label kind="synchronisation" x="-195" y="-153">pace?</label>
 			<label kind="assignment" x="-187" y="-127">t:=0</label>
 			<nail x="-110" y="-127"/>
 		</transition>
 		<transition>
 			<source ref="id0"/>
 			<target ref="id1"/>
-			<label kind="guard" x="-212" y="-255">t &gt;= minBeat</label>
+			<label kind="guard" x="-212" y="-255">t &gt;= highRateInterval</label>
 			<label kind="synchronisation" x="-187" y="-238">sense!</label>
 			<label kind="assignment" x="-178" y="-221">t:=0</label>
 			<nail x="-297" y="-195"/>
