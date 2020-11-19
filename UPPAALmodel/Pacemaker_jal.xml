@@ -61,18 +61,20 @@ int minBeat = 600;
 
 int vrp_min = 150;
 int vrp_max = 500;
+bool heartPaced;
+bool heartPaceEnable;
 
 // refactor clock for pacemaker
 clock t; 
 
 int rateInterval; </declaration>
-		<location id="id2" x="204" y="-306">
-			<name x="189" y="-342">Idle</name>
-			<label kind="invariant" x="147" y="-359">t &lt;= rateInterval</label>
+		<location id="id2" x="76" y="-306">
+			<name x="61" y="-342">Idle</name>
+			<label kind="invariant" x="19" y="-359">t &lt;= rateInterval</label>
 		</location>
-		<location id="id3" x="204" y="-59">
-			<name x="188" y="-43">Wait</name>
-			<label kind="invariant" x="172" y="-27">t &lt; vrp_max</label>
+		<location id="id3" x="76" y="-59">
+			<name x="60" y="-43">Wait</name>
+			<label kind="invariant" x="44" y="-27">t &lt; vrp_max</label>
 		</location>
 		<init ref="id2"/>
 		<transition>
@@ -80,7 +82,8 @@ int rateInterval; </declaration>
 			<target ref="id3"/>
 			<label kind="synchronisation" x="323" y="-213">sense?</label>
 			<label kind="assignment" x="331" y="-187">t=0, 
-rateInterval = highRateInterval</label>
+rateInterval = highRateInterval,
+heartPaced =false</label>
 			<nail x="314" y="-306"/>
 			<nail x="314" y="-59"/>
 		</transition>
@@ -90,12 +93,14 @@ rateInterval = highRateInterval</label>
 			<label kind="guard" x="-51" y="-212">t &gt;= rateInterval</label>
 			<label kind="synchronisation" x="-24" y="-192">pace!</label>
 			<label kind="assignment" x="-85" y="-187">t=0,
-rateInterval=lowRateInterval</label>
+rateInterval=lowRateInterval,
+heartPaced = true</label>
 		</transition>
 		<transition>
 			<source ref="id3"/>
 			<target ref="id2"/>
 			<label kind="guard" x="-327" y="-204">t &gt;= vrp_min</label>
+			<label kind="assignment" x="-399" y="-187">heartPaceEnable :=heartPaced</label>
 			<nail x="-263" y="-68"/>
 			<nail x="-263" y="-308"/>
 		</transition>
@@ -105,7 +110,7 @@ rateInterval=lowRateInterval</label>
 		<declaration>// Place local declarations here.
 bool ventricleStarted; 
 
-int ventricleIntervalTime; </declaration>
+clock ventricleIntervalTime; </declaration>
 		<location id="id4" x="263" y="-119">
 			<name x="253" y="-149">Paced</name>
 			<committed/>
@@ -121,7 +126,8 @@ int ventricleIntervalTime; </declaration>
 		<transition>
 			<source ref="id5"/>
 			<target ref="id6"/>
-			<label kind="synchronisation" x="-110" y="-170">sense?</label>
+			<label kind="synchronisation" x="-110" y="-144">sense?</label>
+			<label kind="assignment" x="-170" y="-170">ventricleStarted = false</label>
 			<nail x="-93" y="-153"/>
 		</transition>
 		<transition>
@@ -134,7 +140,8 @@ ventricleIntervalTime = 0</label>
 		<transition>
 			<source ref="id5"/>
 			<target ref="id4"/>
-			<label kind="synchronisation" x="136" y="-178">pace?</label>
+			<label kind="synchronisation" x="136" y="-144">pace?</label>
+			<label kind="assignment" x="76" y="-170">ventricleStarted = false</label>
 			<nail x="153" y="-153"/>
 		</transition>
 		<transition>
@@ -153,7 +160,35 @@ system RandomHeart, Pacemaker, Observer;</system>
 			<comment></comment>
 		</query>
 		<query>
-			<formula></formula>
+			<formula>A[] Observer.Paced imply (Observer.ventricleIntervalTime &lt;= lowRateInterval)</formula>
+			<comment></comment>
+		</query>
+		<query>
+			<formula>A[] Pacemaker.heartPaced  imply (Observer.ventricleIntervalTime &gt;= 0)</formula>
+			<comment></comment>
+		</query>
+		<query>
+			<formula>A[] Pacemaker.heartPaceEnable imply (Observer.ventricleIntervalTime &lt;= lowRateInterval)</formula>
+			<comment></comment>
+		</query>
+		<query>
+			<formula>A[] Observer.Paced imply (Observer.ventricleIntervalTime &gt;= highRateInterval)</formula>
+			<comment></comment>
+		</query>
+		<query>
+			<formula>A[] (Observer.ventricleIntervalTime &lt;= lowRateInterval)</formula>
+			<comment></comment>
+		</query>
+		<query>
+			<formula>A[] (Observer.ventricleIntervalTime &gt;= highRateInterval)</formula>
+			<comment></comment>
+		</query>
+		<query>
+			<formula>A&lt;&gt; RandomHeart.Ready imply RandomHeart.Idle</formula>
+			<comment></comment>
+		</query>
+		<query>
+			<formula>RandomHeart.Ready --&gt; RandomHeart.Idle</formula>
 			<comment></comment>
 		</query>
 		<query>
