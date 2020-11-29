@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE nta PUBLIC '-//Uppaal Team//DTD Flat System 1.1//EN' 'http://www.it.uu.se/research/group/darts/uppaal/flat-1_2.dtd'>
+<nta>
+	<declaration>// Place global declarations here.
+clock clk;
+
+//urgent channel for sensing
+urgent chan sense;
+// urgent channel for pacing
+urgent chan pace; </declaration>
+	<template>
+		<name x="5" y="5">RandomHeart</name>
+		<declaration>// Place local declarations here.
+
+// internal clock 
+clock t; 
+
+</declaration>
+		<location id="id0" x="-731" y="-316">
+			<name x="-747" y="-308">wait</name>
+		</location>
+		<location id="id1" x="-731" y="-476">
+			<name x="-773" y="-510">readyToBeat</name>
+		</location>
+		<init ref="id1"/>
+		<transition>
+			<source ref="id1"/>
+			<target ref="id0"/>
+			<nail x="-731" y="-331"/>
+		</transition>
+	</template>
+	<template>
+		<name x="5" y="5">Pacemaker</name>
+		<declaration>// Place local declarations here.
+
+int bpm = 0; 
+
+// refactor clock for pacemaker
+clock ref; </declaration>
+		<location id="id2" x="-765" y="-518">
+			<name x="-775" y="-548">Pulse</name>
+			<label kind="invariant" x="-775" y="-501">clk &lt;=5</label>
+			<urgent/>
+		</location>
+		<location id="id3" x="-765" y="-518">
+			<urgent/>
+		</location>
+		<location id="id4" x="-603" y="-518">
+			<label kind="invariant" x="-613" y="-501">clk&lt;=7</label>
+		</location>
+		<init ref="id3"/>
+		<transition>
+			<source ref="id4"/>
+			<target ref="id3"/>
+			<label kind="assignment" x="-747" y="-446">clk :=0</label>
+			<nail x="-646" y="-374"/>
+			<nail x="-671" y="-374"/>
+		</transition>
+		<transition>
+			<source ref="id3"/>
+			<target ref="id2"/>
+		</transition>
+		<transition>
+			<source ref="id2"/>
+			<target ref="id3"/>
+		</transition>
+		<transition>
+			<source ref="id3"/>
+			<target ref="id2"/>
+		</transition>
+		<transition>
+			<source ref="id2"/>
+			<target ref="id3"/>
+		</transition>
+		<transition>
+			<source ref="id3"/>
+			<target ref="id2"/>
+		</transition>
+		<transition>
+			<source ref="id3"/>
+			<target ref="id4"/>
+			<label kind="assignment" x="-747" y="-518">pace := 1</label>
+		</transition>
+		<transition>
+			<source ref="id2"/>
+			<target ref="id3"/>
+		</transition>
+		<transition>
+			<source ref="id3"/>
+			<target ref="id2"/>
+		</transition>
+		<transition>
+			<source ref="id2"/>
+			<target ref="id3"/>
+		</transition>
+	</template>
+	<system>// List one or more processes to be composed into a system.
+system RandomHeart, Pacemaker;</system>
+	<queries>
+		<query>
+			<formula></formula>
+			<comment></comment>
+		</query>
+	</queries>
+</nta>

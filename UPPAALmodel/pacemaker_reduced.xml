@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE nta PUBLIC '-//Uppaal Team//DTD Flat System 1.1//EN' 'http://www.it.uu.se/research/group/darts/uppaal/flat-1_2.dtd'>
+<nta>
+	<declaration>// Place global declarations here.
+
+broadcast chan VPace, VSense;
+</declaration>
+	<template>
+		<name x="5" y="5">Heart</name>
+		<declaration>// Place local declarations here.
+clock sinceBeat;
+
+const int minInterval = 100; // Minimum ms to wait before another heart beat (MS2 requirement)
+const int maxInterval = 1900; // Maximum ms to wait before another heart beat (MS2 requirement)</declaration>
+		<location id="id0" x="-510" y="0">
+			<name x="-586" y="-25">Normal</name>
+			<label kind="invariant" x="-520" y="17">sinceBeat &lt;= maxInterval</label>
+		</location>
+		<location id="id1" x="93" y="0">
+			<name x="110" y="-17">MyocardialRefractory</name>
+			<committed/>
+		</location>
+		<init ref="id0"/>
+		<transition>
+			<source ref="id1"/>
+			<target ref="id0"/>
+			<nail x="51" y="76"/>
+			<nail x="-459" y="76"/>
+		</transition>
+		<transition>
+			<source ref="id0"/>
+			<target ref="id1"/>
+			<label kind="guard" x="-459" y="-25">sinceBeat &gt;= minInterval</label>
+			<label kind="synchronisation" x="-238" y="-25">VSense!</label>
+			<label kind="assignment" x="-102" y="-25">sinceBeat = 0</label>
+		</transition>
+		<transition>
+			<source ref="id0"/>
+			<target ref="id1"/>
+			<label kind="synchronisation" x="-238" y="-102">VPace?</label>
+			<label kind="assignment" x="-102" y="-102">sinceBeat = 0</label>
+			<nail x="-450" y="-76"/>
+			<nail x="51" y="-76"/>
+		</transition>
+	</template>
+	<template>
+		<name>Pacemaker</name>
+		<declaration>clock x;
+
+const int LRL = 55;  //bpm of lower rate limit for pacing given last beat was a pace
+const int HRL = 40; //bpm of hysteresis rate, the slowest the heart should ever beat and the pace rate given the last beat was natural
+
+const int LRI = 1090; //ms;  LRL 55 bpm -&gt; 1/(LRL/60000) = 1090 ms delay;
+const int HRI = 1500;  //ms;  HRL 40 bpm -&gt; 1/(HRL/60000) = 1500 ms delay;
+
+const int VRP = 320; // Refractory period, in ms, after a sensed beat to prevent crosstalk
+
+int RI = LRI; // Amount of time, in ms, to wait before pacing this cycle
+
+
+
+</declaration>
+		<location id="id2" x="-246" y="34">
+			<name x="-306" y="17">Ready</name>
+			<label kind="invariant" x="-306" y="34">x &lt;= RI</label>
+		</location>
+		<location id="id3" x="331" y="34">
+			<name x="348" y="8">Disabled</name>
+			<label kind="invariant" x="348" y="25">x &lt;= VRP</label>
+		</location>
+		<init ref="id2"/>
+		<transition>
+			<source ref="id3"/>
+			<target ref="id2"/>
+			<label kind="guard" x="153" y="102">x &gt;= VRP</label>
+			<nail x="272" y="127"/>
+			<nail x="-195" y="127"/>
+		</transition>
+		<transition>
+			<source ref="id2"/>
+			<target ref="id3"/>
+			<label kind="guard" x="-187" y="-76">x &gt;= RI</label>
+			<label kind="synchronisation" x="-110" y="-76">VPace!</label>
+			<label kind="assignment" x="-25" y="-76">x = 0, RI = LRI</label>
+			<nail x="-195" y="-51"/>
+			<nail x="272" y="-51"/>
+		</transition>
+		<transition>
+			<source ref="id2"/>
+			<target ref="id3"/>
+			<label kind="synchronisation" x="-110" y="8">VSense?</label>
+			<label kind="assignment" x="-25" y="8">x = 0, RI = HRI</label>
+		</transition>
+	</template>
+	<system>// Place template instantiations here.
+// List one or more processes to be composed into a system.
+system Heart, Pacemaker;
+    </system>
+	<queries>
+		<query>
+			<formula>A[] (not Observer.previousNaturalBeat &amp;&amp; Observer.VSensed) imply Observer.sinceBeat &lt;= Pacemaker.LRI
+			</formula>
+			<comment>
+			</comment>
+		</query>
+		<query>
+			<formula>A[] (not Observer.previousNaturalBeat &amp;&amp; Observer.VPaced) imply Observer.sinceBeat == Pacemaker.LRI
+			</formula>
+			<comment>
+			</comment>
+		</query>
+		<query>
+			<formula>A[] (Observer.previousNaturalBeat &amp;&amp; Observer.VSensed) imply Observer.sinceBeat &lt;= Pacemaker.HRI
+			</formula>
+			<comment>
+			</comment>
+		</query>
+		<query>
+			<formula>A[] (Observer.previousNaturalBeat &amp;&amp; Observer.VPaced) imply Observer.sinceBeat == Pacemaker.HRI
+			</formula>
+			<comment>
+			</comment>
+		</query>
+		<query>
+			<formula>A[] (Observer.vstarted &amp;&amp; Pacemaker.Ready) imply Observer.sinceBeat &gt;= Pacemaker.VRP
+			</formula>
+			<comment>
+			</comment>
+		</query>
+		<query>
+			<formula>A[] Observer.VPaced imply Observer.sinceBeat &gt;= Heart.minInterval
+			</formula>
+			<comment>
+			</comment>
+		</query>
+		<query>
+			<formula>A[] Observer.VSensed imply Observer.sinceBeat &gt;= Heart.minInterval
+			</formula>
+			<comment>
+			</comment>
+		</query>
+		<query>
+			<formula>A[] Observer.sinceBeat &lt;= Pacemaker.HRI
+			</formula>
+			<comment>
+			</comment>
+		</query>
+		<query>
+			<formula>Heart.Normal --&gt; Heart.MyocardialRefractory
+			</formula>
+			<comment>
+			</comment>
+		</query>
+		<query>
+			<formula>E[] not Observer.VPaced
+			</formula>
+			<comment>
+			</comment>
+		</query>
+		<query>
+			<formula>E[] not Observer.VSensed
+			</formula>
+			<comment>
+			</comment>
+		</query>
+		<query>
+			<formula>A[] not deadlock
+			</formula>
+			<comment>
+			</comment>
+		</query>
+	</queries>
+</nta>
