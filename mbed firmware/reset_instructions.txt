@@ -1,0 +1,8 @@
+To reset the mbed 1768 board :
+Copy the firmware file mbedmicrontroller_141212.if to the mbed board connected over USB
+Perform the Non-CRP brick setps : https://os.mbed.com/cookbook/Unbricking
+	Put the mbed board in ISP mode
+	Copy a new a compiled bin into the baord
+	Power cycle the board
+Now uploading the new os from mbed studio should work.
+
