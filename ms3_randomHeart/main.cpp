@@ -48,10 +48,10 @@ int main()
         // }
 
         //  SPI communiation
-        if (device.receive()) {
+        // if (device.receive()) {
             int valueFromMaster = device.read(); // read value from master 
 
-            if(valueFromMaster == 2){
+            if(valueFromMaster != 1){
                 //2 = Pacemaker wants to read
                 x = rh.dispatch(SENSE);
                 if (x == SENSE) {
@@ -70,7 +70,7 @@ int main()
                 lcd.printf("paced \n time = %.2f", rh.sinceBeat);
                 flash4(); 
             } 
-        }             
+        // }             
     }
             
 }
