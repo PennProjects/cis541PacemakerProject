@@ -1,19 +1,16 @@
-/* pacmaker.cpp */ 
+/* pacemaker.cpp */ 
 
 #include "pacemaker.h"
 #include "mbed.h"
 
 
 event Pacemaker::dispatch(unsigned int signal) {
-//CLK = std::chrono::duration_cast<std::chrono::milliseconds>(t.elapsed_time()).count();
-CLK = t.read_ms(); 
+CLK = t.read_ms(); // update clock variable 
 switch (myState) {
     case READY: // IF we're in ready state, 
         switch (signal) {
-            case PACE: 
-                if (eval_guard(rd_dis_pace)) {
-                    // TODO: send PACE 
-                    //CLK = 0; 
+            case PACE:
+                if (eval_guard(rd_dis_pace)) { // if the timer approaches RI, reset timer and PACE heart 
                     t.stop(); 
                     t.reset(); 
                     t.start();  
@@ -23,8 +20,7 @@ switch (myState) {
                 }
                 return SENSE; 
                 break; 
-            case SENSE:
-                //CLK = 0; 
+            case SENSE: // if sense signal recieved, reset time and transition 
                 t.stop(); 
                 t.reset(); 
                 t.start(); 
@@ -40,8 +36,8 @@ switch (myState) {
 } return NONE; 
 }
 
-
-bool Pacemaker::eval_guard(int trn) {
+// evaluate guards
+bool Pacemaker::eval_guard(int trn) { 
     switch(trn) {
         case rd_dis_pace:
             return CLK >= RI; 
