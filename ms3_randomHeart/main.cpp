@@ -8,7 +8,7 @@
 //BufferedSerial serial(USBTX, USBRX, 9600);
 //SerialStream<BufferedSerial> pc(serial);
 SPISlave device(p11, p12, p13, p14); // mosi, miso, sclk, ChipSelect
-TextLCD lcd(p15, p16, p17, p18, p19, p20, TextLCD::LCD16x2);  // SETUP LCD 
+//TextLCD lcd(p15, p16, p17, p18, p19, p20, TextLCD::LCD16x2);  // SETUP LCD 
 
 DigitalOut led1(LED1); // define the LED pin
 DigitalOut led4(LED4);
@@ -56,8 +56,9 @@ int main()
                 x = rh.dispatch(SENSE);
                 if (x == SENSE) {
                     flash1(); 
-                    lcd.cls(); 
-                    lcd.printf("self beat \n time = %.2f", rh.sinceBeat);
+                    wait_us(300); 
+               //     lcd.cls(); 
+                //    lcd.printf("self beat \n time = %.2f", rh.sinceBeat);
                      flash1(); 
                     device.reply(1);  //Reply sense   
                 }
@@ -65,12 +66,14 @@ int main()
             else if (valueFromMaster ==1 ) { //Pace Signal
                 x = rh.dispatch(PACE); 
 
-                flash4(); 
-                lcd.cls(); 
-                lcd.printf("paced \n time = %.2f", rh.sinceBeat);
+                flash4();
+                wait_us(300); 
+               // lcd.cls(); 
+               // lcd.printf("paced \n time = %.2f", rh.sinceBeat);
                 flash4(); 
             } 
-        // }             
+        // }         
+        device.reply(0);     
     }
             
 }
