@@ -34,7 +34,7 @@ switch (myState) {
         tran(NORMAL); 
         return PACE; 
     break; 
-}return NONE;
+}return PACE;
 }
 
 // evaluate guards 
