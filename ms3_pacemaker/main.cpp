@@ -34,14 +34,16 @@ void led2_fun() { // Too slow
 }
 void led3_fun() { // too fast 
     led3 = 1; 
-    pc.printf("[ALARM] Heart beating too fast\n"); 
+    pc.printf("[ALARM] Heart beating too fast\n");
 }
 
 void pacemaker_t_func() {
-    mux.lock(); 
-    x = pace.dispatch(PACE);
-    wait_us(50);  
-    mux.unlock(); 
+    while (true) {
+        mux.lock(); 
+        x = pace.dispatch(PACE);
+        wait_us(50);  
+        mux.unlock(); 
+    }
 }
 
 void alarm_func() {
@@ -65,6 +67,7 @@ void alarm_func() {
 
 int spi_read, spi_write;
 
+
 int main()
 {
     // SPI Configuration
@@ -73,14 +76,13 @@ int main()
      cs = 0; // Select device
 
 
-    Thread pacemaker_thread, alarm_thread;  
+    Thread pacemaker_thread, alarm_thread;
     pacemaker_thread.start(pacemaker_t_func); 
-    alarm_thread.start(alarm_func); 
+    alarm_thread.start(alarm_func);
 
     
     pace.init(); 
 
-    //Obs.start(); 
     while (true) {
         t.start(); 
         // SPI code
@@ -105,11 +107,8 @@ int main()
                 lcd.cls();  
                 lcd.printf("paced \n time = %.2f", pace.CLK);
                 flash4(); 
-                
-                //SPI code
                 spi_write = 1;
                 int spi_read =  spi.write(spi_write); //send value
-    
                 }
             mux.unlock(); 
         }   
